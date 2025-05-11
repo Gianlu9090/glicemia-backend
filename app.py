@@ -30,7 +30,7 @@ def submit():
 
     # Salvataggio su DynamoDB
     DEXCOM_TABLE.put_item(Item={
-        "userId": user_id,
+        "UserId": user_id,
         "username": username_enc,
         "password": password_enc,
         "consent": consent
