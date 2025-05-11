@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Dexcom - Skill Glicemia</title>
+</head>
+<body>
+  <h2>Collega il tuo account Dexcom</h2>
+  <form action="https://glicemia-backend-1.onrender.com/submit" method="post" enctype="application/x-www-form-urlencoded">
+    <label for="UserId">ID Utente Alexa:</label><br>
+    <input type="text" id="UserId" name="UserId" required><br><br>
+
+    <label for="username">Username Dexcom:</label><br>
+    <input type="email" id="username" name="username" required><br><br>
+
+    <label for="password">Password Dexcom:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label>
+      <input type="checkbox" name="consent" required>
+      Acconsento all'uso anonimo dei miei dati glicemici per fini statistici.
+    </label><br><br>
+
+    <button type="submit">Collega account</button>
+  </form>
+</body>
+</html>
