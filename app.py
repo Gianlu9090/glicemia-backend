@@ -19,7 +19,6 @@ def home():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    user_id = request.form["userId"]
     username = request.form["username"]
     password = request.form["password"]
     consent = "consent" in request.form
@@ -30,28 +29,28 @@ def submit():
 
     # Salvataggio su DynamoDB
     DEXCOM_TABLE.put_item(Item={
-        "userId": user_id,
-        "username": username_enc,
+        "username": username,  # ora è la chiave primaria
+        "username_enc": username_enc,
         "password": password_enc,
         "consent": consent
     })
 
-    return f"Dati salvati per l'utente {user_id}"
+    return f"Dati salvati per l'utente {username}"
 
 @app.route("/get_user", methods=["GET"])
 def get_user():
-    user_id = request.args.get("userId")
+    username = request.args.get("username")
 
-    if not user_id:
-        return jsonify({"error": "Parametro userId mancante"}), 400
+    if not username:
+        return jsonify({"error": "Parametro 'username' mancante"}), 400
 
-    response = DEXCOM_TABLE.get_item(Key={"userId": user_id})
+    response = DEXCOM_TABLE.get_item(Key={"username": username})
 
     if "Item" not in response:
         return jsonify({"error": "Utente non trovato"}), 404
 
     item = response["Item"]
-    username_dec = f.decrypt(item["username"].encode()).decode()
+    username_dec = f.decrypt(item["username_enc"].encode()).decode()
     password_dec = f.decrypt(item["password"].encode()).decode()
 
     return jsonify({
@@ -60,6 +59,5 @@ def get_user():
         "consent": item.get("consent", False)
     })
 
-# ✅ Flask su Render (porta obbligatoria)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
