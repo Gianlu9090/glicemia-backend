@@ -3,10 +3,11 @@ import boto3
 from cryptography.fernet import Fernet
 import os
 import uuid
+from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 
-# Chiave segreta
+# Chiave segreta da variabile d'ambiente
 fernet_key = os.environ.get("FERNET_KEY").encode()
 f = Fernet(fernet_key)
 
@@ -20,38 +21,47 @@ def home():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    # Obbligatori
-    username = request.form["username"]
-    password = request.form["password"]
-    
-    # Controlla che abbia accettato privacy policy
+    # Controllo privacy obbligatoria
     if "privacy" not in request.form:
         return "Devi accettare la privacy policy per continuare.", 400
 
-    # Cifratura credenziali
+    # Genera un nuovo userId ogni volta
+    user_id = str(uuid.uuid4())
+
+    # Estrai i dati dal form
+    username = request.form["username"]
+    password = request.form["password"]
+    birth_year = request.form.get("birth_year")
+    gender = request.form.get("gender")
+    diabetes_type = request.form.get("diabetes_type")
+    consent = "consent" in request.form
+
+    # Cifratura
     username_enc = f.encrypt(username.encode()).decode()
     password_enc = f.encrypt(password.encode()).decode()
 
-    # Costruisce l’item base
+    # Costruzione dell’item da salvare
     item = {
-        "userId": str(uuid.uuid4()),
+        "userId": user_id,
         "username": username,
         "username_enc": username_enc,
         "password": password_enc,
+        "birth_year": int(birth_year) if birth_year else None,
+        "gender": gender,
+        "diabetes_type": diabetes_type,
+        "consent": consent
     }
 
-    # Se l’utente ha acconsentito
-    item["consent"] = "consent" in request.form
+    # Inserimento con condizione per evitare duplicati (in teoria userId è sempre nuovo)
+    try:
+        DEXCOM_TABLE.put_item(
+            Item=item,
+            ConditionExpression="attribute_not_exists(userId)"
+        )
+    except ClientError as e:
+        return f"Errore nel salvataggio: {str(e)}", 500
 
-    if item["consent"]:
-        item["birth_year"] = request.form.get("birth_year", "")
-        item["gender"] = request.form.get("gender", "")
-        item["diabetes_type"] = request.form.get("diabetes_type", "")
-
-    # Salvataggio su DynamoDB
-    DEXCOM_TABLE.put_item(Item=item)
-
-    return f"Dati salvati per l'utente {item['userId']}"
+    return f"Dati salvati per l'utente {user_id}"
 
 @app.route("/get_user", methods=["GET"])
 def get_user():
@@ -72,12 +82,11 @@ def get_user():
     return jsonify({
         "username": username_dec,
         "password": password_dec,
-        "consent": item.get("consent", False),
-        "birth_year": item.get("birth_year", ""),
-        "gender": item.get("gender", ""),
-        "diabetes_type": item.get("diabetes_type", "")
+        "birth_year": item.get("birth_year"),
+        "gender": item.get("gender"),
+        "diabetes_type": item.get("diabetes_type"),
+        "consent": item.get("consent", False)
     })
 
-# Avvio Flask
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
