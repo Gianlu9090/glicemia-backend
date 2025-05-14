@@ -20,37 +20,39 @@ def home():
 
 @app.route("/submit", methods=["POST"])
 def submit():
+    # ✅ Blocco se non accettata privacy
     if "privacy" not in request.form:
         return "Devi accettare la privacy policy per continuare.", 400
 
-    # Genera un nuovo userId ogni volta
     user_id = str(uuid.uuid4())
-
-    # Estrai i dati dal form
     username = request.form["username"]
     password = request.form["password"]
-    birth_year = request.form.get("birth_year")
-    gender = request.form.get("gender")
-    diabetes_type = request.form.get("diabetes_type")
     consent = "consent" in request.form
 
-    # Cifratura
     username_enc = f.encrypt(username.encode()).decode()
     password_enc = f.encrypt(password.encode()).decode()
 
-    # Costruzione dell’item da salvare
+    # Dati base sempre salvati
     item = {
         "userId": user_id,
         "username": username,
         "username_enc": username_enc,
         "password": password_enc,
-        "birth_year": int(birth_year) if birth_year else None,
-        "gender": gender,
-        "diabetes_type": diabetes_type,
         "consent": consent
     }
 
-    # Salvataggio normale senza condizione (userId sempre nuovo)
+    # Dati aggiuntivi solo se consenso
+    if consent:
+        birth_year = request.form.get("birth_year")
+        gender = request.form.get("gender")
+        diabetes_type = request.form.get("diabetes_type")
+        if birth_year:
+            item["birth_year"] = int(birth_year)
+        if gender:
+            item["gender"] = gender
+        if diabetes_type:
+            item["diabetes_type"] = diabetes_type
+
     DEXCOM_TABLE.put_item(Item=item)
 
     return f"Dati salvati per l'utente {user_id}"
@@ -58,12 +60,10 @@ def submit():
 @app.route("/get_user", methods=["GET"])
 def get_user():
     user_id = request.args.get("userId")
-
     if not user_id:
         return jsonify({"error": "Parametro userId mancante"}), 400
 
     response = DEXCOM_TABLE.get_item(Key={"userId": user_id})
-
     if "Item" not in response:
         return jsonify({"error": "Utente non trovato"}), 404
 
