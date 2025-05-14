@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: glicemia-backend
+    env: python
+    buildCommand: ""
+    startCommand: python app.py
+    plan: free
