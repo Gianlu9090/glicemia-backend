@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import boto3
 from cryptography.fernet import Fernet
 import os
@@ -15,7 +15,7 @@ DEXCOM_TABLE = dynamodb.Table("DexcomUsers")
 
 @app.route("/")
 def home():
-    return "✅ Backend online!"
+    return render_template("index.html")
 
 @app.route("/submit", methods=["POST"])
 def submit():
@@ -30,7 +30,7 @@ def submit():
 
     # Salvataggio su DynamoDB
     DEXCOM_TABLE.put_item(Item={
-        "UserId": user_id,
+        "userId": user_id,
         "username": username_enc,
         "password": password_enc,
         "consent": consent
