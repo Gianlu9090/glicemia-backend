@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 
-# Chiave di cifratura
+# Legge la chiave segreta dalla variabile d'ambiente FERNET_KEY
 fernet_key = os.environ.get("FERNET_KEY").encode()
 f = Fernet(fernet_key)
 
@@ -24,9 +24,11 @@ def submit():
     password = request.form["password"]
     consent = "consent" in request.form
 
+    # Cifratura
     username_enc = f.encrypt(username.encode()).decode()
     password_enc = f.encrypt(password.encode()).decode()
 
+    # Salvataggio su DynamoDB
     DEXCOM_TABLE.put_item(Item={
         "userId": user_id,
         "username": username_enc,
@@ -39,25 +41,25 @@ def submit():
 @app.route("/get_user", methods=["GET"])
 def get_user():
     user_id = request.args.get("userId")
+
     if not user_id:
-        return jsonify({"error": "Missing userId"}), 400
+        return jsonify({"error": "Parametro userId mancante"}), 400
 
     response = DEXCOM_TABLE.get_item(Key={"userId": user_id})
-    item = response.get("Item")
 
-    if not item:
-        return jsonify({"error": "User not found"}), 404
+    if "Item" not in response:
+        return jsonify({"error": "Utente non trovato"}), 404
 
-    try:
-        username = f.decrypt(item["username"].encode()).decode()
-        password = f.decrypt(item["password"].encode()).decode()
-    except Exception:
-        return jsonify({"error": "Decryption failed"}), 500
+    item = response["Item"]
+    username_dec = f.decrypt(item["username"].encode()).decode()
+    password_dec = f.decrypt(item["password"].encode()).decode()
 
     return jsonify({
-        "username": username,
-        "password": password
+        "username": username_dec,
+        "password": password_dec,
+        "consent": item.get("consent", False)
     })
-    
+
+# ✅ Flask su Render (porta obbligatoria)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
