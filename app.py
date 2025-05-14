@@ -3,7 +3,6 @@ import boto3
 from cryptography.fernet import Fernet
 import os
 import uuid
-from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 
@@ -21,7 +20,6 @@ def home():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    # Controllo privacy obbligatoria
     if "privacy" not in request.form:
         return "Devi accettare la privacy policy per continuare.", 400
 
@@ -52,14 +50,8 @@ def submit():
         "consent": consent
     }
 
-    # Inserimento con condizione per evitare duplicati (in teoria userId è sempre nuovo)
-    try:
-        DEXCOM_TABLE.put_item(
-            Item=item,
-            ConditionExpression="attribute_not_exists(userId)"
-        )
-    except ClientError as e:
-        return f"Errore nel salvataggio: {str(e)}", 500
+    # Salvataggio normale senza condizione (userId sempre nuovo)
+    DEXCOM_TABLE.put_item(Item=item)
 
     return f"Dati salvati per l'utente {user_id}"
 
