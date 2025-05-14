@@ -5,11 +5,11 @@ import os
 
 app = Flask(__name__)
 
-# Legge la chiave segreta dalla variabile d'ambiente FERNET_KEY
+# Recupera la chiave di cifratura
 fernet_key = os.environ.get("FERNET_KEY").encode()
 f = Fernet(fernet_key)
 
-# Connessione a DynamoDB nella regione corretta (modifica se serve)
+# Connessione a DynamoDB
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 DEXCOM_TABLE = dynamodb.Table("DexcomUsers")
 
@@ -19,25 +19,24 @@ def home():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    user_id = request.form["userId"]
     username = request.form["username"]
     password = request.form["password"]
     consent = "consent" in request.form
 
-    # Cifratura delle credenziali
+    # Cifratura
     username_enc = f.encrypt(username.encode()).decode()
     password_enc = f.encrypt(password.encode()).decode()
 
-    # Salvataggio su DynamoDB
+    # Salvataggio
     DEXCOM_TABLE.put_item(Item={
-        "UserId": user_id,             # 👈 CORRETTO!
-        "username": username_enc,
+        "username": username,  # chiave primaria visibile
+        "username_enc": username_enc,
         "password": password_enc,
         "consent": consent
     })
 
-    return f"Dati salvati per l'utente {user_id}"
+    return f"✅ Credenziali salvate per {username}"
 
-# ✅ Avvio del server Flask per Render (porta e host obbligatori)
+# Avvio server
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
