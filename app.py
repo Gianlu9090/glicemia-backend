@@ -55,7 +55,19 @@ def submit():
 
     DEXCOM_TABLE.put_item(Item=item)
 
-    return f"Dati salvati per l'utente {user_id}"
+    return """
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrazione completata</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; margin-top: 100px;">
+  <h1 style="color: green;">✅ Registrazione completata con successo!</h1>
+  <p>Grazie per aver collegato il tuo account Dexcom.</p>
+</body>
+</html>
+"""
 
 @app.route("/get_user", methods=["GET"])
 def get_user():
