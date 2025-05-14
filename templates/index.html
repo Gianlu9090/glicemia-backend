@@ -2,45 +2,48 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <title>Collega il tuo account Dexcom</title>
+  <title>Completa il tuo profilo</title>
 </head>
 <body>
   <h2>Completa il tuo profilo</h2>
   <form action="/submit" method="post">
-    <label for="username">Username Dexcom:</label><br />
-    <input type="email" id="username" name="username" required /><br /><br />
+    <!-- Username -->
+    <label for="username">Username Dexcom:</label><br>
+    <input type="email" id="username" name="username" required><br><br>
 
-    <label for="password">Password Dexcom:</label><br />
-    <input type="password" id="password" name="password" required /><br /><br />
+    <!-- Password -->
+    <label for="password">Password Dexcom:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
 
-    <label for="birth_year">Anno di nascita:</label><br />
-    <input type="number" id="birth_year" name="birth_year" min="1924" max="2025" required /><br /><br />
+    <!-- Anno di nascita -->
+    <label for="birth_year">Anno di nascita:</label><br>
+    <input type="number" id="birth_year" name="birth_year" min="1924" max="2025"><br><br>
 
-    <label>Sesso:</label><br />
-    <input type="radio" id="male" name="gender" value="Maschio" required />
-    <label for="male">Maschio</label><br />
-    <input type="radio" id="female" name="gender" value="Femmina" />
-    <label for="female">Femmina</label><br />
-    <input type="radio" id="other" name="gender" value="Altro / preferisco non dire" />
-    <label for="other">Altro / preferisco non dire</label><br /><br />
+    <!-- Sesso -->
+    <label>Sesso:</label><br>
+    <input type="radio" id="male" name="gender" value="Maschio">
+    <label for="male">Maschio</label><br>
+    <input type="radio" id="female" name="gender" value="Femmina">
+    <label for="female">Femmina</label><br>
+    <input type="radio" id="other" name="gender" value="Altro / preferisco non dire">
+    <label for="other">Altro / preferisco non dire</label><br><br>
 
-    <label for="diabetes_type">Tipo di diabete:</label><br />
-    <select id="diabetes_type" name="diabetes_type" required>
+    <!-- Tipo di diabete -->
+    <label for="diabetes_type">Tipo di diabete:</label><br>
+    <select name="diabetes_type" id="diabetes_type">
       <option value="Tipo 1">Tipo 1</option>
       <option value="Tipo 2">Tipo 2</option>
       <option value="Gestazionale">Gestazionale</option>
       <option value="Altro / non specificato">Altro / non specificato</option>
-    </select><br /><br />
+    </select><br><br>
 
-    <label>
-      <input type="checkbox" name="consent" />
-      Acconsento all'uso anonimo dei miei dati per fini statistici
-    </label><br /><br />
+    <!-- Checkbox: consenso facoltativo -->
+    <input type="checkbox" id="consent" name="consent" value="yes">
+    <label for="consent">Acconsento all'uso anonimo dei miei dati per fini statistici</label><br><br>
 
-    <label>
-      <input type="checkbox" name="privacy" value="yes" required />
-      Ho letto e accetto la <a href="https://violet-pest-ac1.notion.site/Privacy-Policy-Glicemia-Vocale-1eb1ee190b538092aa80cf6680fba291" target="_blank">Privacy Policy</a>
-    </label><br /><br />
+    <!-- Checkbox: privacy obbligatoria -->
+    <input type="checkbox" id="privacy" name="privacy" value="yes" required>
+    <label for="privacy">Ho letto e accetto la <a href="https://violet-pest-ac1.notion.site/Privacy-Policy-Glicemia-Vocale-1eb1ee190b538092aa80cf6680fba291" target="_blank">Privacy Policy</a></label><br><br>
 
     <button type="submit">Invia</button>
   </form>
