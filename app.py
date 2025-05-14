@@ -13,12 +13,10 @@ f = Fernet(fernet_key)
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 DEXCOM_TABLE = dynamodb.Table("DexcomUsers")
 
-# Serve il form HTML
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# Riceve e salva le credenziali da form
 @app.route("/submit", methods=["POST"])
 def submit():
     user_id = request.form["userId"]
@@ -26,11 +24,9 @@ def submit():
     password = request.form["password"]
     consent = "consent" in request.form
 
-    # Cifratura
     username_enc = f.encrypt(username.encode()).decode()
     password_enc = f.encrypt(password.encode()).decode()
 
-    # Salvataggio su DynamoDB
     DEXCOM_TABLE.put_item(Item={
         "userId": user_id,
         "username": username_enc,
@@ -40,27 +36,28 @@ def submit():
 
     return f"Dati salvati per l'utente {user_id}"
 
-# ✅ NUOVO endpoint: restituisce credenziali decifrate dato userId
-@app.route("/get_creds", methods=["POST"])
-def get_creds():
-    user_id = request.form.get("userId")
+@app.route("/get_user", methods=["GET"])
+def get_user():
+    user_id = request.args.get("userId")
+    if not user_id:
+        return jsonify({"error": "Missing userId"}), 400
 
-    # Cerca l'utente in DynamoDB
     response = DEXCOM_TABLE.get_item(Key={"userId": user_id})
     item = response.get("Item")
 
     if not item:
-        return jsonify({"error": "Utente non trovato"}), 404
+        return jsonify({"error": "User not found"}), 404
 
-    # Decifra i dati
-    username = f.decrypt(item["username"].encode()).decode()
-    password = f.decrypt(item["password"].encode()).decode()
+    try:
+        username = f.decrypt(item["username"].encode()).decode()
+        password = f.decrypt(item["password"].encode()).decode()
+    except Exception:
+        return jsonify({"error": "Decryption failed"}), 500
 
     return jsonify({
         "username": username,
         "password": password
     })
-
-# Avvio del server Flask (solo in locale)
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
