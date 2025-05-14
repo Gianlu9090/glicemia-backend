@@ -2,20 +2,46 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Collega Dexcom</title>
+  <title>Domande Profilo Utente</title>
 </head>
 <body>
-  <h2>Collega il tuo account Dexcom</h2>
+  <h2>Completa il tuo profilo</h2>
   <form action="/submit" method="post">
-    <label for="username">Email Dexcom:</label><br>
+
+    <label for="username">Username Dexcom:</label><br>
     <input type="email" id="username" name="username" required><br><br>
 
     <label for="password">Password Dexcom:</label><br>
     <input type="password" id="password" name="password" required><br><br>
 
+    <label for="birthyear">Anno di nascita:</label><br>
+    <input type="number" id="birthyear" name="birthyear" min="1900" max="2025"><br><br>
+
+    <label>Sesso:</label><br>
+    <input type="radio" id="male" name="sex" value="maschio">
+    <label for="male">Maschio</label><br>
+    <input type="radio" id="female" name="sex" value="femmina">
+    <label for="female">Femmina</label><br>
+    <input type="radio" id="other" name="sex" value="altro">
+    <label for="other">Altro / preferisco non dire</label><br><br>
+
+    <label>Tipo di diabete:</label><br>
+    <select name="diabetes_type">
+      <option value="">-- Seleziona --</option>
+      <option value="tipo1">Tipo 1</option>
+      <option value="tipo2">Tipo 2</option>
+      <option value="gestazionale">Gestazionale</option>
+      <option value="altro">Altro / non specificato</option>
+    </select><br><br>
+
     <label>
-      <input type="checkbox" name="consent" required>
-      Acconsento all'uso anonimo dei dati glicemici per soli fini statistici
+      <input type="checkbox" name="consent">
+      Acconsento all'uso anonimo dei miei dati per fini statistici
+    </label><br><br>
+
+    <label>
+      <input type="checkbox" name="privacy" required>
+      Ho letto e accetto la <a href="https://violet-pest-ac1.notion.site/Privacy-Policy-Glicemia-Vocale-1eb1ee190b538092aa80cf6680fba291" target="_blank">Privacy Policy</a>
     </label><br><br>
 
     <button type="submit">Invia</button>
