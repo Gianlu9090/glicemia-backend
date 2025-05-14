@@ -2,31 +2,32 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Domande Profilo Utente</title>
+  <title>Collega il tuo account Dexcom</title>
 </head>
 <body>
-  <h2>Completa il tuo profilo</h2>
+  <h2>Collega il tuo account Dexcom</h2>
+
   <form action="/submit" method="post">
 
-    <label for="username">Username Dexcom:</label><br>
+    <label for="username">Email Dexcom:</label><br>
     <input type="email" id="username" name="username" required><br><br>
 
     <label for="password">Password Dexcom:</label><br>
     <input type="password" id="password" name="password" required><br><br>
 
-    <label for="birthyear">Anno di nascita:</label><br>
-    <input type="number" id="birthyear" name="birthyear" min="1900" max="2025"><br><br>
+    <label for="birth_year">Anno di nascita:</label><br>
+    <input type="number" id="birth_year" name="birth_year" min="1900" max="2025"><br><br>
 
     <label>Sesso:</label><br>
-    <input type="radio" id="male" name="sex" value="maschio">
+    <input type="radio" id="male" name="gender" value="maschio">
     <label for="male">Maschio</label><br>
-    <input type="radio" id="female" name="sex" value="femmina">
+    <input type="radio" id="female" name="gender" value="femmina">
     <label for="female">Femmina</label><br>
-    <input type="radio" id="other" name="sex" value="altro">
-    <label for="other">Altro / preferisco non dire</label><br><br>
+    <input type="radio" id="other" name="gender" value="altro">
+    <label for="other">Altro / preferisco non dirlo</label><br><br>
 
-    <label>Tipo di diabete:</label><br>
-    <select name="diabetes_type">
+    <label for="diabetes_type">Tipo di diabete:</label><br>
+    <select id="diabetes_type" name="diabetes_type">
       <option value="">-- Seleziona --</option>
       <option value="tipo1">Tipo 1</option>
       <option value="tipo2">Tipo 2</option>
@@ -40,11 +41,11 @@
     </label><br><br>
 
     <label>
-      <input type="checkbox" name="privacy" required>
+      <input type="checkbox" name="accept_privacy" required>
       Ho letto e accetto la <a href="https://violet-pest-ac1.notion.site/Privacy-Policy-Glicemia-Vocale-1eb1ee190b538092aa80cf6680fba291" target="_blank">Privacy Policy</a>
     </label><br><br>
 
-    <button type="submit">Invia</button>
+    <button type="submit">Collega account</button>
   </form>
 </body>
 </html>
