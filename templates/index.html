@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Completa il tuo profilo</title>
   <script>
-    // Appena la pagina è pronta, prelevo userId dalla query‐string
+    // Quando la pagina viene caricata, leggo userId dalla query string
     window.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const userId = params.get("userId") || "";
@@ -15,7 +15,7 @@
 <body style="font-family: sans-serif; text-align: center; margin-top: 30px;">
   <h2>Completa il tuo profilo</h2>
   <form action="/submit" method="post">
-    <!-- Campo nascosto per passare lo userId di Alexa -->
+    <!-- Campo nascosto per trasferire l'userId di Alexa -->
     <input type="hidden" name="userId" id="userIdField" value="">
 
     <!-- Username Dexcom -->
@@ -55,7 +55,11 @@
 
     <!-- Checkbox: privacy obbligatoria -->
     <input type="checkbox" id="privacy" name="privacy" value="yes" required>
-    <label for="privacy">Ho letto e accetto la <a href="https://violet-pest-ac1.notion.site/Privacy-Policy-Glicemia-Vocale-1eb1ee190b538092aa80cf6680fba291" target="_blank">Privacy Policy</a></label><br><br>
+    <label for="privacy">Ho letto e accetto la 
+      <a href="https://violet-pest-ac1.notion.site/Privacy-Policy-Glicemia-Vocale-1eb1ee190b538092aa80cf6680fba291" target="_blank">
+        Privacy Policy
+      </a>
+    </label><br><br>
 
     <button type="submit">Invia</button>
   </form>
