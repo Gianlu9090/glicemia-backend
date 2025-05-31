@@ -3,15 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <title>Completa il tuo profilo</title>
+  <script>
+    // Appena la pagina è pronta, prelevo userId dalla query‐string
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get("userId") || "";
+      document.getElementById("userIdField").value = userId;
+    });
+  </script>
 </head>
-<body>
+<body style="font-family: sans-serif; text-align: center; margin-top: 30px;">
   <h2>Completa il tuo profilo</h2>
   <form action="/submit" method="post">
-    <!-- Username -->
+    <!-- Campo nascosto per passare lo userId di Alexa -->
+    <input type="hidden" name="userId" id="userIdField" value="">
+
+    <!-- Username Dexcom -->
     <label for="username">Username Dexcom:</label><br>
     <input type="email" id="username" name="username" required><br><br>
 
-    <!-- Password -->
+    <!-- Password Dexcom -->
     <label for="password">Password Dexcom:</label><br>
     <input type="password" id="password" name="password" required><br><br>
 
@@ -31,6 +42,7 @@
     <!-- Tipo di diabete -->
     <label for="diabetes_type">Tipo di diabete:</label><br>
     <select name="diabetes_type" id="diabetes_type">
+      <option value="">– seleziona –</option>
       <option value="Tipo 1">Tipo 1</option>
       <option value="Tipo 2">Tipo 2</option>
       <option value="Gestazionale">Gestazionale</option>
