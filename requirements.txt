@@ -1,3 +1,5 @@
 flask
 boto3
 cryptography
+pydexcom
+requests
