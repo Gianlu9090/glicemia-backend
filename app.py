@@ -53,13 +53,16 @@ def submit():
         birth_year = request.form.get("birth_year")
         gender = request.form.get("gender")
         diabetes_type = request.form.get("diabetes_type")
+
         if birth_year:
             try:
                 item["birth_year"] = int(birth_year)
             except ValueError:
                 pass  # ignora se non è un numero valido
+
         if gender:
             item["gender"] = gender
+
         if diabetes_type:
             item["diabetes_type"] = diabetes_type
 
